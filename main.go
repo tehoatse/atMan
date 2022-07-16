@@ -10,6 +10,8 @@ import (
 type model struct {
 	xPos int
 	yPos int
+	screenX int
+	screenY int
 }
 
 func main() {
@@ -19,6 +21,8 @@ func main() {
     }
 
 	var man model
+	man.screenX = width
+	man.screenY = height
 	man.xPos = width/2
 	man.yPos = height/2
 
