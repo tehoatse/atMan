@@ -11,10 +11,13 @@ import (
 )
 
 // todo
-// code in boundaries
 // create state interface
 // put in 'help' to show position
 // put current state into state interface
+// okay so I have it, the string that gets returned by 'view'
+// can be drawn into, I need to figure out how to find the correct spot in the string
+// and insert a string into it, essentially 'drawing' over the top of a string.
+// yeeeeas
 
 type model struct {
 	logfile *os.File
