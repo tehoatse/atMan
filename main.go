@@ -6,6 +6,7 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"golang.org/x/term"
 )
 
@@ -105,4 +106,11 @@ func checkBoundaries(m model) model {
 	}
 	return m
 
+}
+
+func setStyles() lipgloss.Style {
+	s := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("#FAFAFA"))
+	return s
 }
