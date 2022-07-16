@@ -58,6 +58,14 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
+	width, height, err := term.GetSize(0)
+	if err != nil {
+		return nil, nil
+	}
+	
+	m.screenX = width
+	m.screenY = height
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -83,7 +91,7 @@ func (m model) View() string {
 
 	s := ""
 
-	for y := 0; y < m.screenY-1; y++ {
+	for y := 0; y < m.screenY - 1; y++ {
 		for x := 0; x < m.screenX; x++ {
 			s += draw(m, x, y)
 		}
@@ -95,20 +103,18 @@ func (m model) View() string {
 
 func checkBoundaries(m model) model {
 	width, height, err := term.GetSize(0)
-
 	if err != nil {
 		return m
 	} else if m.xPos < 0 {
 		m.xPos = 0
 	} else if m.yPos < 0 {
 		m.yPos = 0
-	} else if m.xPos >= width {
+	} else if m.xPos >= m.screenX {
 		m.xPos = width - 1
-	} else if m.yPos >= height -1 {
+	} else if m.yPos >= m.screenY - 1 {
 		m.yPos = height - 2
 	}
 	return m
-
 }
 
 func setStyles() lipgloss.Style {
@@ -127,7 +133,7 @@ func draw(m model, x, y int) string {
 		s = "."
 	}
 
-	if x == m.screenX-1 {
+	if x == m.screenX-1{
 		s += "\n"
 	}
 	return s
