@@ -20,6 +20,8 @@ type model struct {
 	logfile *os.File
 	xPos    int
 	yPos    int
+	screenX int
+	screenY int
 }
 
 func main() {
@@ -32,6 +34,9 @@ func main() {
 	var man model
 	man.xPos = width / 2
 	man.yPos = height / 2
+	man.screenX = width
+	man.screenY = height
+
 
 	man.logfile, err = tea.LogToFile("debug.log", "debug")
 	if err != nil {
@@ -75,18 +80,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
+
 	s := ""
 
-	for i := 0; i < m.yPos; i++ {
-		s += "\n"
+	for y := 0; y < m.screenY-1; y++ {
+		for x := 0; x < m.screenX; x++ {
+			s += draw(m, x, y)
+		}
 	}
-	for i := 0; i < m.xPos; i++ {
-		s += " "
-	}
-
-	s += "@"
-
-	//	fmt.Fprint(m.logfile, s)
+	// s += setStyles().Render("Farts")
+	// fmt.Fprint(m.logfile, s)
 	return s
 }
 
@@ -101,8 +104,8 @@ func checkBoundaries(m model) model {
 		m.yPos = 0
 	} else if m.xPos >= width {
 		m.xPos = width - 1
-	} else if m.yPos >= height {
-		m.yPos = height - 1
+	} else if m.yPos >= height -1 {
+		m.yPos = height - 2
 	}
 	return m
 
@@ -111,6 +114,21 @@ func checkBoundaries(m model) model {
 func setStyles() lipgloss.Style {
 	s := lipgloss.NewStyle().
 		Bold(true).
-		Foreground(lipgloss.Color("#FAFAFA"))
+		Background(lipgloss.Color("#505050")).
+		Foreground(lipgloss.Color("#000000"))
+	return s
+}
+
+func draw(m model, x, y int) string {
+	s := ""
+	if x == m.xPos && y == m.yPos {
+		s = "@"
+	} else {
+		s = "."
+	}
+
+	if x == m.screenX-1 {
+		s += "\n"
+	}
 	return s
 }
