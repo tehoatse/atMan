@@ -9,12 +9,16 @@ import (
 	"golang.org/x/term"
 )
 
+// todo
+// code in boundaries
+// create state interface
+// put in 'help' to show position
+// put current state into state interface
+
 type model struct {
 	logfile *os.File
 	xPos    int
 	yPos    int
-	screenX int
-	screenY int
 }
 
 func main() {
@@ -25,8 +29,6 @@ func main() {
 	}
 
 	var man model
-	man.screenX = width
-	man.screenY = height
 	man.xPos = width / 2
 	man.yPos = height / 2
 
@@ -50,14 +52,6 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	width, height, err := term.GetSize(0)
-	if err != nil {
-		return m, nil
-	}
-
-	m.screenX = width
-	m.screenY = height
-
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -74,32 +68,41 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
+	m = checkBoundaries(m)
+
 	return m, nil
 }
 
 func (m model) View() string {
 	s := ""
 
-	for y := 0; y < m.screenY; y++ {
-		for x := 0; x < m.screenX; x++ {
-			s += draw(m, x, y)
-		}
+	for i := 0; i < m.yPos; i++ {
+		s += "\n"
+	}
+	for i := 0; i < m.xPos; i++ {
+		s += " "
 	}
 
-	fmt.Fprint(m.logfile, s)
+	s += "@"
+
+	//	fmt.Fprint(m.logfile, s)
 	return s
 }
 
-func draw(m model, x, y int) string {
-	s := ""
-	if x == m.xPos && y == m.yPos {
-		s = "@"
-	} else {
-		s = "."
-	}
+func checkBoundaries(m model) model {
+	width, height, err := term.GetSize(0)
 
-	if x == m.screenX-1 {
-		s += "\n"
+	if err != nil {
+		return m
+	} else if m.xPos < 0 {
+		m.xPos = 0
+	} else if m.yPos < 0 {
+		m.yPos = 0
+	} else if m.xPos >= width {
+		m.xPos = width - 1
+	} else if m.yPos >= height {
+		m.yPos = height - 1
 	}
-	return s
+	return m
+
 }
