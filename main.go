@@ -11,6 +11,8 @@ import (
 )
 
 // todo
+// okay so if the screen is x wide and y high
+// we can get cell 1, 0 by going  w * 2 + 1
 // create state interface
 // put in 'help' to show position
 // put current state into state interface
@@ -40,7 +42,6 @@ func main() {
 	man.screenX = width
 	man.screenY = height
 
-
 	man.logfile, err = tea.LogToFile("debug.log", "debug")
 	if err != nil {
 		fmt.Println("fatal:", err)
@@ -65,7 +66,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if err != nil {
 		return nil, nil
 	}
-	
+
 	m.screenX = width
 	m.screenY = height
 
@@ -94,11 +95,12 @@ func (m model) View() string {
 
 	s := ""
 
-	for y := 0; y < m.screenY - 1; y++ {
+	for y := 0; y < m.screenY-1; y++ {
 		for x := 0; x < m.screenX; x++ {
-			s += draw(m, x, y)
+			s += drawCell(m, x, y)
 		}
 	}
+	s = insert(s, "Help", 222)
 	// s += setStyles().Render("Farts")
 	// fmt.Fprint(m.logfile, s)
 	return s
@@ -114,7 +116,7 @@ func checkBoundaries(m model) model {
 		m.yPos = 0
 	} else if m.xPos >= m.screenX {
 		m.xPos = width - 1
-	} else if m.yPos >= m.screenY - 1 {
+	} else if m.yPos >= m.screenY-1 {
 		m.yPos = height - 2
 	}
 	return m
@@ -128,7 +130,7 @@ func setStyles() lipgloss.Style {
 	return s
 }
 
-func draw(m model, x, y int) string {
+func drawCell(m model, x, y int) string {
 	s := ""
 	if x == m.xPos && y == m.yPos {
 		s = "@"
@@ -136,8 +138,19 @@ func draw(m model, x, y int) string {
 		s = "."
 	}
 
-	if x == m.screenX-1{
+	if x == m.screenX-1 {
 		s += "\n"
 	}
 	return s
+}
+
+func insert(original string, addition string, index int) string {
+	s := []rune(original)
+	character := []rune(addition)
+
+	for i, char := range character {
+		s[index+i] = char
+	}
+
+	return string(s)
 }
