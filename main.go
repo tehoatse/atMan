@@ -116,28 +116,31 @@ func (m model) View() string {
 			s += drawCell(m, x, y)
 		}
 	}
+	s = wrap.String(s, m.screenWidth)
 
 	
 	// s = insertByIndex(&s, "PISSSSSSSS", 222)
-	s = m.insertByCoords(&s, fmt.Sprintf("%d", m.screenWidth), 10, 10)
-	// s = m.insertByAbsolute(&s, "mooo", topCentre)
+	// s = m.insertByCoords(&s, "X", 10, 10)
+	s = m.insertByAbsolute(&s, "mooo", bottomLeft)
+	s = m.insertByAbsolute(&s, "bottom right", bottomRight)
+	s = m.insertByAbsolute(&s, "right", right)
+	s = m.insertByAbsolute(&s, "centre", centre)
 	// s += setStyles().Render("Farts")
 	// fmt.Fprint(m.logfile, s)
-	return wrap.String(s, m.screenWidth)
+	
+	fmt.Fprint(m.logfile, s)
+	return s
 }
 
 func checkBoundaries(m model) model {
-	width, height, err := term.GetSize(0)
-	if err != nil {
-		return m
-	} else if m.xPos < 0 {
+	if m.xPos < 0 {
 		m.xPos = 0
 	} else if m.yPos < 0 {
 		m.yPos = 0
 	} else if m.xPos >= m.screenWidth {
-		m.xPos = width - 1
-	} else if m.yPos >= m.screenHeight-1 {
-		m.yPos = height - 1
+		m.xPos = m.screenWidth - 1
+	} else if m.yPos >= m.screenHeight {
+		m.yPos = m.screenHeight - 1
 	}
 	return m
 }
@@ -180,22 +183,35 @@ func insertByIndex(original *string, addition string, index int) string {
 
 
 func (m *model) insertByCoords(original *string, addition string, x, y int) string {
-	index := (y-1)*m.screenWidth + y + x - 1
+	index := y * m.screenWidth + y + x
 	return insertByIndex(original, addition, index)
 }
 
 func (m *model) insertByAbsolute(original *string, addition string, position int) string {
 
-	s := ""
+	var x, y int
 
 	switch position {
 	case topLeft:
-		s = m.insertByCoords(original, addition, 0, 0)
+		x, y = 0, 0
 	case topCentre:
-		s = m.insertByCoords(original, addition, m.screenWidth/2, 0)
+		x, y = m.screenWidth/2 - len(addition)/2, 0
 	case topRight:
-		s = m.insertByCoords(original, addition, m.screenWidth-len(addition)-1, 0)
+		x, y  = m.screenWidth-len(addition), 0
+	case left:
+		x, y =  0, m.screenHeight/2
+	case centre:
+		x, y = (m.screenWidth-len(addition))/2, m.screenHeight/2 
+	case right:
+		x, y = m.screenWidth-len(addition), m.screenHeight/2 
+	case bottomLeft:
+		x, y = 0, m.screenHeight-1
+	case bottomCentre:
+		x,y = (m.screenWidth-len(addition))/2, m.screenHeight-1
+	case bottomRight:
+		x,y = m.screenWidth-len(addition), m.screenHeight-1
 	}
 
-	return s
+
+	return m.insertByCoords(original, addition, x, y)
 }
