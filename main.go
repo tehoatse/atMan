@@ -21,12 +21,24 @@ import (
 // and insert a string into it, essentially 'drawing' over the top of a string.
 // yeeeeas
 
+const (
+	topLeft int = iota
+	topCentre
+	topRight
+	left
+	centre
+	right
+	bottomLeft
+	bottomCentre
+	bottomRight
+)
+
 type model struct {
-	logfile *os.File
-	xPos    int
-	yPos    int
-	screenX int
-	screenY int
+	logfile      *os.File
+	xPos         int
+	yPos         int
+	screenWidth  int
+	screenHeight int
 }
 
 func main() {
@@ -39,8 +51,8 @@ func main() {
 	var man model
 	man.xPos = width / 2
 	man.yPos = height / 2
-	man.screenX = width
-	man.screenY = height
+	man.screenWidth = width
+	man.screenHeight = height
 
 	man.logfile, err = tea.LogToFile("debug.log", "debug")
 	if err != nil {
@@ -67,8 +79,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return nil, nil
 	}
 
-	m.screenX = width
-	m.screenY = height
+	m.screenWidth = width
+	m.screenHeight = height
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -95,12 +107,14 @@ func (m model) View() string {
 
 	s := ""
 
-	for y := 0; y < m.screenY-1; y++ {
-		for x := 0; x < m.screenX; x++ {
+	for y := 0; y < m.screenHeight-1; y++ {
+		for x := 0; x < m.screenWidth; x++ {
 			s += drawCell(m, x, y)
 		}
 	}
-	s = insert(s, "Help", 222)
+	s = insertByIndex(&s, "PISSSSSSSS", 222)
+	s = m.insertByCoords(&s, "Help, I need somebody", 10, 10)
+	s = m.insertByAbsolute(&s, "mooo", topCentre)
 	// s += setStyles().Render("Farts")
 	// fmt.Fprint(m.logfile, s)
 	return s
@@ -114,14 +128,15 @@ func checkBoundaries(m model) model {
 		m.xPos = 0
 	} else if m.yPos < 0 {
 		m.yPos = 0
-	} else if m.xPos >= m.screenX {
+	} else if m.xPos >= m.screenWidth {
 		m.xPos = width - 1
-	} else if m.yPos >= m.screenY-1 {
+	} else if m.yPos >= m.screenHeight-1 {
 		m.yPos = height - 2
 	}
 	return m
 }
 
+// not sure what this is, maybe I'll keep
 func setStyles() lipgloss.Style {
 	s := lipgloss.NewStyle().
 		Bold(true).
@@ -130,6 +145,7 @@ func setStyles() lipgloss.Style {
 	return s
 }
 
+// needs to be refactored
 func drawCell(m model, x, y int) string {
 	s := ""
 	if x == m.xPos && y == m.yPos {
@@ -138,14 +154,14 @@ func drawCell(m model, x, y int) string {
 		s = "."
 	}
 
-	if x == m.screenX-1 {
+	if x == m.screenWidth-1 {
 		s += "\n"
 	}
 	return s
 }
 
-func insert(original string, addition string, index int) string {
-	s := []rune(original)
+func insertByIndex(original *string, addition string, index int) string {
+	s := []rune(*original)
 	character := []rune(addition)
 
 	for i, char := range character {
@@ -153,4 +169,26 @@ func insert(original string, addition string, index int) string {
 	}
 
 	return string(s)
+}
+
+func (m *model) insertByCoords(original *string, addition string, x, y int) string {
+	// so we need the reference for the insert
+	index := (y-1)*m.screenWidth + y + x - 1
+	return insertByIndex(original, addition, index)
+}
+
+func (m *model) insertByAbsolute(original *string, addition string, position int) string {
+
+	s := ""
+
+	switch position {
+	case topLeft:
+		s = m.insertByCoords(original, addition, 0, 0)
+	case topCentre:
+		s = m.insertByCoords(original, addition, m.screenWidth/2, 0)
+	case topRight:
+		s = m.insertByCoords(original, addition, m.screenWidth-len(addition)-1, 0)
+	}
+
+	return s
 }
