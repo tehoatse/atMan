@@ -7,6 +7,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/reflow/wrap"
 	"golang.org/x/term"
 )
 
@@ -20,6 +21,7 @@ import (
 // can be drawn into, I need to figure out how to find the correct spot in the string
 // and insert a string into it, essentially 'drawing' over the top of a string.
 // yeeeeas
+// this is broken right now...
 
 const (
 	topLeft int = iota
@@ -43,6 +45,8 @@ type model struct {
 
 func main() {
 
+	// terminal getsize, does it start at zero?! let's see!
+	// these are the absolute number of cells, it doesn't start at cell zero
 	width, height, err := term.GetSize(0)
 	if err != nil {
 		return
@@ -107,17 +111,19 @@ func (m model) View() string {
 
 	s := ""
 
-	for y := 0; y < m.screenHeight-1; y++ {
+	for y := 0; y < m.screenHeight; y++ {
 		for x := 0; x < m.screenWidth; x++ {
 			s += drawCell(m, x, y)
 		}
 	}
-	s = insertByIndex(&s, "PISSSSSSSS", 222)
-	s = m.insertByCoords(&s, "Help, I need somebody", 10, 10)
-	s = m.insertByAbsolute(&s, "mooo", topCentre)
+
+	
+	// s = insertByIndex(&s, "PISSSSSSSS", 222)
+	s = m.insertByCoords(&s, fmt.Sprintf("%d", m.screenWidth), 10, 10)
+	// s = m.insertByAbsolute(&s, "mooo", topCentre)
 	// s += setStyles().Render("Farts")
 	// fmt.Fprint(m.logfile, s)
-	return s
+	return wrap.String(s, m.screenWidth)
 }
 
 func checkBoundaries(m model) model {
@@ -131,7 +137,7 @@ func checkBoundaries(m model) model {
 	} else if m.xPos >= m.screenWidth {
 		m.xPos = width - 1
 	} else if m.yPos >= m.screenHeight-1 {
-		m.yPos = height - 2
+		m.yPos = height - 1
 	}
 	return m
 }
@@ -154,9 +160,9 @@ func drawCell(m model, x, y int) string {
 		s = "."
 	}
 
-	if x == m.screenWidth-1 {
-		s += "\n"
-	}
+	// if x == m.screenWidth-1 {
+	// 	s += "\n"
+	// }
 	return s
 }
 
@@ -171,8 +177,9 @@ func insertByIndex(original *string, addition string, index int) string {
 	return string(s)
 }
 
+
+
 func (m *model) insertByCoords(original *string, addition string, x, y int) string {
-	// so we need the reference for the insert
 	index := (y-1)*m.screenWidth + y + x - 1
 	return insertByIndex(original, addition, index)
 }
