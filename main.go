@@ -41,6 +41,8 @@ type model struct {
 	yPos         int
 	screenWidth  int
 	screenHeight int
+	prevWidth int
+	prevHeight int
 }
 
 func main() {
@@ -104,8 +106,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	m = checkBoundaries(m)
 
-	return m, tea.HideCursor
+	return m, nil
 }
+
 
 func (m model) View() string {
 
