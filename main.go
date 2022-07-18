@@ -118,13 +118,12 @@ func (m model) View() string {
 	}
 	s = wrap.String(s, m.screenWidth)
 
-	
 	// s = insertByIndex(&s, "PISSSSSSSS", 222)
 	// s = m.insertByCoords(&s, "X", 10, 10)
 	s = m.insertByAbsolute(&s, fmt.Sprintf("At man is at %dx, %dy", m.xPos, m.yPos), bottomLeft)
 	// s += setStyles().Render("Farts")
 	// fmt.Fprint(m.logfile, s)
-	
+
 	fmt.Fprint(m.logfile, s)
 	return s
 }
@@ -177,10 +176,8 @@ func insertByIndex(original *string, addition string, index int) string {
 	return string(s)
 }
 
-
-
 func (m *model) insertByCoords(original *string, addition string, x, y int) string {
-	index := y * m.screenWidth + y + x
+	index := y*m.screenWidth + y + x
 	return insertByIndex(original, addition, index)
 }
 
@@ -192,23 +189,22 @@ func (m *model) insertByAbsolute(original *string, addition string, position int
 	case topLeft:
 		x, y = 0, 0
 	case topCentre:
-		x, y = m.screenWidth/2 - len(addition)/2, 0
+		x, y = m.screenWidth/2-len(addition)/2, 0
 	case topRight:
-		x, y  = m.screenWidth-len(addition), 0
+		x, y = m.screenWidth-len(addition), 0
 	case left:
-		x, y =  0, m.screenHeight/2
+		x, y = 0, m.screenHeight/2
 	case centre:
-		x, y = (m.screenWidth-len(addition))/2, m.screenHeight/2 
+		x, y = (m.screenWidth-len(addition))/2, m.screenHeight/2
 	case right:
-		x, y = m.screenWidth-len(addition), m.screenHeight/2 
+		x, y = m.screenWidth-len(addition), m.screenHeight/2
 	case bottomLeft:
 		x, y = 0, m.screenHeight-1
 	case bottomCentre:
-		x,y = (m.screenWidth-len(addition))/2, m.screenHeight-1
+		x, y = (m.screenWidth-len(addition))/2, m.screenHeight-1
 	case bottomRight:
-		x,y = m.screenWidth-len(addition), m.screenHeight-1
+		x, y = m.screenWidth-len(addition), m.screenHeight-1
 	}
-
 
 	return m.insertByCoords(original, addition, x, y)
 }
