@@ -73,7 +73,7 @@ func main() {
 }
 
 func (m model) Init() tea.Cmd {
-	return nil
+	return tea.HideCursor
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -121,10 +121,7 @@ func (m model) View() string {
 	
 	// s = insertByIndex(&s, "PISSSSSSSS", 222)
 	// s = m.insertByCoords(&s, "X", 10, 10)
-	s = m.insertByAbsolute(&s, "mooo", bottomLeft)
-	s = m.insertByAbsolute(&s, "bottom right", bottomRight)
-	s = m.insertByAbsolute(&s, "right", right)
-	s = m.insertByAbsolute(&s, "centre", centre)
+	s = m.insertByAbsolute(&s, fmt.Sprintf("At man is at %dx, %dy", m.xPos, m.yPos), bottomLeft)
 	// s += setStyles().Render("Farts")
 	// fmt.Fprint(m.logfile, s)
 	
