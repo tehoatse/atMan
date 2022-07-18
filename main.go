@@ -104,7 +104,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	m = checkBoundaries(m)
 
-	return m, nil
+	return m, tea.HideCursor
 }
 
 func (m model) View() string {
