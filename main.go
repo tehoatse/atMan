@@ -49,22 +49,32 @@ func main() {
 
 	// terminal getsize, does it start at zero?! let's see!
 	// these are the absolute number of cells, it doesn't start at cell zero
-	width, height, err := term.GetSize(0)
-	if err != nil {
-		return
-	}
-
 	var man model
-	man.xPos = width / 2
-	man.yPos = height / 2
-	man.screenWidth = width
-	man.screenHeight = height
+	var err error
 
 	man.logfile, err = tea.LogToFile("debug.log", "debug")
 	if err != nil {
 		fmt.Println("fatal:", err)
 		os.Exit(1)
 	}
+
+	width, height, err := term.GetSize(0)
+	if err != nil {
+		fmt.Fprintf(man.logfile, "There was an error: %s", err)
+		return
+	}
+
+	
+	man.xPos = width / 2
+	man.yPos = height / 2
+	man.screenWidth = width
+	man.screenHeight = height
+
+
+
+
+
+
 	defer man.logfile.Close()
 
 	p := tea.NewProgram(man, tea.WithAltScreen())
