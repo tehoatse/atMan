@@ -118,7 +118,7 @@ func (m model) View() string {
 
 	// s = insertByIndex(&s, "PISSSSSSSS", 222)
 	// s = m.insertByCoords(&s, "X", 10, 10)
-	s = m.insertByAbsolute(&s, fmt.Sprintf("At man is at %dx, %dy", m.xPos, m.yPos), bottomLeft)
+	s = m.insertByAbsolute(&s, fmt.Sprintf("atman is at %dx, %dy", m.xPos, m.yPos), bottomLeft)
 	// s += setStyles().Render("Farts")
 	// fmt.Fprint(m.logfile, s)
 
