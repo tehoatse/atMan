@@ -8,7 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/reflow/wrap"
-	"golang.org/x/term"
+	"github.com/nathan-fiscaletti/consolesize-go"
 )
 
 // todo
@@ -41,8 +41,6 @@ type model struct {
 	yPos         int
 	screenWidth  int
 	screenHeight int
-	prevWidth int
-	prevHeight int
 }
 
 func main() {
@@ -58,24 +56,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	width, height, err := term.GetSize(0)
-	if err != nil {
-		fmt.Fprintf(man.logfile, "There was an error: %s", err)
-		return
-	}
+	defer man.logfile.Close()
 
+	width, height := consolesize.GetConsoleSize()
 	
 	man.xPos = width / 2
 	man.yPos = height / 2
 	man.screenWidth = width
 	man.screenHeight = height
-
-
-
-
-
-
-	defer man.logfile.Close()
 
 	p := tea.NewProgram(man, tea.WithAltScreen())
 	if err := p.Start(); err != nil {
@@ -90,10 +78,7 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	width, height, err := term.GetSize(0)
-	if err != nil {
-		return nil, nil
-	}
+	width, height := consolesize.GetConsoleSize()
 
 	m.screenWidth = width
 	m.screenHeight = height
