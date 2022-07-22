@@ -12,8 +12,8 @@ import (
 )
 
 // todo
-// okay so if the screen is x wide and y high
-// we can get cell 1, 0 by going  w * 2 + 1
+// we need a panel interface
+// panel and state interfaces
 // create state interface
 // put in 'help' to show position
 // put current state into state interface
@@ -59,7 +59,7 @@ func main() {
 	defer man.logfile.Close()
 
 	width, height := consolesize.GetConsoleSize()
-	
+
 	man.xPos = width / 2
 	man.yPos = height / 2
 	man.screenWidth = width
@@ -103,7 +103,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	return m, nil
 }
-
 
 func (m model) View() string {
 
