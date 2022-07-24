@@ -4,13 +4,21 @@ package main
 // we want it to have the dimensions, the position and the contents of the panel
 // it may also have a parent panel?
 
-
-type Panel interface {
-	String() string
-	Width() int
-	Height() int
-	Position() (int, int)
-	Parent() Panel
-	Alignment() int
+type Panel struct {
+	String    string
+	Width     int
+	Height    int
+	Parent    *Panel
+	Alignment int
 }
 
+func NewPanel() *Panel {
+	var p Panel
+
+	p.String = ""
+	p.Width = 0
+	p.Height = 0
+	p.Alignment = 0
+
+	return &p
+}
