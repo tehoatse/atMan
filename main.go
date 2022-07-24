@@ -82,7 +82,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.screenWidth = width
 	m.screenHeight = height
 
-	
+
 
 
 	switch msg := msg.(type) {
@@ -120,6 +120,8 @@ func (m model) View() string {
 	// s = insertByIndex(&s, "PISSSSSSSS", 222)
 	// s = m.insertByCoords(&s, "X", 10, 10)
 	s = m.insertByAbsolute(&s, fmt.Sprintf("atman is at %dx, %dy", m.xPos, m.yPos), bottomLeft)
+	s = m.insertByAbsolute(&s, "atman ats", topLeft)
+	
 	// s += setStyles().Render("Farts")
 	// fmt.Fprint(m.logfile, s)
 
