@@ -10,6 +10,8 @@ type Panel struct {
 	Height    int
 	Parent    *Panel
 	Alignment int
+	anchorRow int
+	anchorColumn int
 }
 
 func NewPanel() *Panel {
@@ -22,3 +24,14 @@ func NewPanel() *Panel {
 
 	return &p
 }
+
+func draw(p []Panel) string {
+	s := ""
+	for _, panel := range p {
+		s+= panel.String
+	}	
+	return s
+}
+
+
+

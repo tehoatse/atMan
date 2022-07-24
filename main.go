@@ -79,9 +79,11 @@ func (m model) Init() tea.Cmd {
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	width, height := consolesize.GetConsoleSize()
-
 	m.screenWidth = width
 	m.screenHeight = height
+
+	
+
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
