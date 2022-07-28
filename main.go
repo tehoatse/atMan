@@ -41,6 +41,7 @@ type model struct {
 	yPos         int
 	screenWidth  int
 	screenHeight int
+	panels []Panel
 }
 
 func main() {
@@ -110,6 +111,8 @@ func (m model) View() string {
 
 	s := ""
 
+
+
 	for y := 0; y < m.screenHeight; y++ {
 		for x := 0; x < m.screenWidth; x++ {
 			s += drawCell(m, x, y)
@@ -123,7 +126,7 @@ func (m model) View() string {
 	s = m.insertByAbsolute(&s, "atman ats", topLeft)
 	
 	// s += setStyles().Render("Farts")
-	// fmt.Fprint(m.logfile, s)
+	// fmt.Fprint(m.logfile, s)S
 
 	fmt.Fprint(m.logfile, s)
 	return s
@@ -209,3 +212,4 @@ func (m *model) insertByAbsolute(original *string, addition string, position int
 
 	return m.insertByCoords(original, addition, x, y)
 }
+
