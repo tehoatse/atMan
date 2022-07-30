@@ -66,6 +66,8 @@ func main() {
 	man.screenWidth = width
 	man.screenHeight = height
 
+	man.panels = man.createPanels()
+
 	p := tea.NewProgram(man, tea.WithAltScreen())
 	if err := p.Start(); err != nil {
 		log.Fatal(err)
@@ -108,23 +110,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-
 	s := ""
 
-
-
-	for y := 0; y < m.screenHeight; y++ {
-		for x := 0; x < m.screenWidth; x++ {
-			s += drawCell(m, x, y)
-		}
-	}
-	s = wrap.String(s, m.screenWidth)
+	// for y := 0; y < m.screenHeight; y++ {
+	// 	for x := 0; x < m.screenWidth; x++ {
+	// 		s += drawCell(m, x, y)
+	// 	}
+	// }
+	// s = wrap.String(s, m.screenWidth)
 
 	// s = insertByIndex(&s, "PISSSSSSSS", 222)
 	// s = m.insertByCoords(&s, "X", 10, 10)
-	s = m.insertByAbsolute(&s, fmt.Sprintf("atman is at %dx, %dy", m.xPos, m.yPos), bottomLeft)
-	s = m.insertByAbsolute(&s, "atman ats", topLeft)
-	
+	// s = m.insertByAbsolute(&s, fmt.Sprintf("atman is at %dx, %dy", m.xPos, m.yPos), bottomLeft)
+	// s = m.insertByAbsolute(&s, "atman ats", topLeft)
 	// s += setStyles().Render("Farts")
 	// fmt.Fprint(m.logfile, s)S
 
@@ -213,3 +211,27 @@ func (m *model) insertByAbsolute(original *string, addition string, position int
 	return m.insertByCoords(original, addition, x, y)
 }
 
+func (m *model) createPanels() []Panel{
+	var panels []Panel
+	var p Panel
+	p.anchorRow, p.anchorColumn = 0, 0
+	p.width = m.screenWidth/2
+	p.height = m.screenHeight/2
+	p.fillRune = '*'
+	panels = append(panels, p)
+	p.anchorRow, p.anchorColumn = m.screenWidth/2 + 1, 0
+	p.width = m.screenWidth/2
+	p.height = m.screenHeight/2
+	p.fillRune = '#'
+	panels = append(panels, p)
+	p.anchorRow, p.anchorColumn = 0, m.screenHeight/2 + 1
+	p.width = m.screenWidth/2
+	p.height = m.screenHeight/2
+	p.fillRune = 'O'
+	panels = append(panels, p)
+	p.anchorRow, p.anchorColumn = m.screenWidth+1, m.screenHeight+1
+	p.width = m.screenWidth/2
+	p.height = m.screenHeight/2
+	p.fillRune = '&'
+	return panels
+}

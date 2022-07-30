@@ -48,10 +48,8 @@ func (p *Panel) fillPanel() string {
 	for i := 0; i < p.height * p.width; i++ {
 		s += string(p.fillRune)
 	}
-	s = wrap.String(s, p.width)
 	return s
 }
-
 
 func (p *Panel) insertByCoords(original *string, addition string, x, y int) string {
 	index := y*p.width + y + x
@@ -84,6 +82,12 @@ func (p *Panel) insertByAbsolute(original *string, addition string, position int
 	}
 
 	return p.insertByCoords(original, addition, x, y)
+}
+
+func (p *Panel) renderPanel() {
+	s := p.fillPanel()
+	s = wrap.String(s, p.width)
+	p.String = s
 }
 
 
