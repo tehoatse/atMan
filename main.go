@@ -7,7 +7,6 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/muesli/reflow/wrap"
 	"github.com/nathan-fiscaletti/consolesize-go"
 )
 
@@ -85,8 +84,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.screenWidth = width
 	m.screenHeight = height
 
-
-
+	m.panels = m.createPanels()
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -126,7 +124,9 @@ func (m model) View() string {
 	// s += setStyles().Render("Farts")
 	// fmt.Fprint(m.logfile, s)S
 
-	fmt.Fprint(m.logfile, s)
+	//fmt.Fprint(m.logfile, s)
+
+	s = screenPainter(m.panels, m)
 	return s
 }
 
@@ -214,24 +214,67 @@ func (m *model) insertByAbsolute(original *string, addition string, position int
 func (m *model) createPanels() []Panel{
 	var panels []Panel
 	var p Panel
-	p.anchorRow, p.anchorColumn = 0, 0
-	p.width = m.screenWidth/2
-	p.height = m.screenHeight/2
-	p.fillRune = '*'
-	panels = append(panels, p)
-	p.anchorRow, p.anchorColumn = m.screenWidth/2 + 1, 0
-	p.width = m.screenWidth/2
-	p.height = m.screenHeight/2
+
+	p.anchorRow = 0
+	p.anchorColumn = 0
+	p.height = 1
+	p.width = m.screenWidth
 	p.fillRune = '#'
 	panels = append(panels, p)
-	p.anchorRow, p.anchorColumn = 0, m.screenHeight/2 + 1
-	p.width = m.screenWidth/2
-	p.height = m.screenHeight/2
-	p.fillRune = 'O'
+
+	p.anchorRow = 1
+	p.anchorColumn = 0
+	p.height = m.screenHeight - 2
+	p.width = m.screenWidth
+	p.fillRune = '.'
 	panels = append(panels, p)
-	p.anchorRow, p.anchorColumn = m.screenWidth+1, m.screenHeight+1
-	p.width = m.screenWidth/2
-	p.height = m.screenHeight/2
-	p.fillRune = '&'
+
+	p.anchorRow = m.screenHeight -1
+	p.anchorColumn = 0
+	p.height = 1
+	p.width = m.screenWidth
+	p.fillRune = '#'
+	panels = append(panels, p)
+
 	return panels
 }
+
+// func (m *model) createPanels() []Panel{
+// 	var panels []Panel
+// 	var p Panel
+// 	p.anchorRow, p.anchorColumn = 0, 0
+// 	p.width = m.screenWidth/2
+// 	p.height = m.screenHeight/2
+// 	p.fillRune = '*'
+// 	panels = append(panels, p)
+// 	p.anchorRow, p.anchorColumn = 0, m.screenWidth/2 + 1
+// 	p.width = m.screenWidth/2
+// 	p.height = m.screenHeight/2
+// 	p.fillRune = '#'
+// 	panels = append(panels, p)
+// 	p.anchorRow, p.anchorColumn = m.screenHeight/2 + 1, 0
+// 	p.width = m.screenWidth/2
+// 	p.height = m.screenHeight/2
+// 	p.fillRune = 'O'
+// 	panels = append(panels, p)
+// 	p.anchorRow, p.anchorColumn = m.screenWidth/2+1, m.screenHeight/2+1
+// 	p.width = m.screenWidth/2
+// 	p.height = m.screenHeight/2
+// 	p.fillRune = '&'
+//  panels = append(panels, p)
+// 	return panels
+// }
+
+
+
+// func (m *model) createPanels() []Panel{
+// 	var panels []Panel
+// 	var p Panel
+// 	p.anchorRow = 0
+// 	p.anchorColumn = 0
+// 	p.fillRune = '#'
+// 	p.width = m.screenWidth
+// 	p.height = m.screenHeight
+// 	panels = append(panels, p)
+// 	return panels
+// }
